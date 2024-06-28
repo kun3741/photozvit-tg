@@ -8,7 +8,11 @@ const token = process.env.TOKEN;
 const mongoUri = process.env.MONGODB_URI;
 const allowedUserIds = process.env.ALLOWED_USER_IDS.split(',').map(id => id.trim());
 
-const bot = new TelegramBot(token, { polling: true });
+const bot = new TelegramBot(token, { webHook: true });
+
+// Встановіть webhook URL
+const url = process.env.URL || 'https://your-vercel-project-url.vercel.app';
+bot.setWebHook(`${url}/api/bot`);
 
 const managerId = '827127631';  // заміни на реальний Telegram ID менеджера
 const managerContact = '@vaysed_manager';  // заміни на реальний контакт менеджера
@@ -34,8 +38,7 @@ bot.onText(/\/start/, async (msg) => {
         if (file) {
             await bot.sendMessage(userId, `📸 Фотозвіт знайдено! Переглянути його можна за посиланням нижче.\n${file.text}`);
             if (file.textPath && fs.existsSync(file.textPath)) {
-                const textContent = fs.readFileSync(file.textPath, 'utf-8');
-                await bot.sendMessage(userId, textContent);
+                await bot.sendMessage(userId, file.textPath);
                 sendSurvey(userId);
             } else {
                 sendSurvey(userId);
@@ -130,7 +133,5 @@ bot.onText(/\/addfile (.+)/, async (msg, match) => {
         await bot.sendMessage(chatId, 'Під час додавання нового файлу сталася помилка.');
     }
 });
-
-bot.on("polling_error", (err) => console.log(err));
 
 console.log('Bot started');
