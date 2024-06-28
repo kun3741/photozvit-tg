@@ -11,8 +11,10 @@ const allowedUserIds = process.env.ALLOWED_USER_IDS.split(',').map(id => id.trim
 const bot = new TelegramBot(token, { webHook: true });
 
 // Встановіть webhook URL
-const url = process.env.URL || 'https://your-vercel-project-url.vercel.app';
-bot.setWebHook(`${url}/api/bot`);
+const url = process.env.URL || 'https://photozvit-tg.vercel.app/';
+bot.setWebHook(`${url}/api/bot`)
+    .then(() => console.log('Webhook встановлено успішно'))
+    .catch(err => console.error('Помилка встановлення Webhook:', err));
 
 const managerId = '827127631';  // заміни на реальний Telegram ID менеджера
 const managerContact = '@vaysed_manager';  // заміни на реальний контакт менеджера
